@@ -1,0 +1,6 @@
+# Ignore environment variables file
+.env
+.env.example
+# Ignore Python cache files
+__pycache__/
+*.pyc
