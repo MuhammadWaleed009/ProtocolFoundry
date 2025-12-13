@@ -1,6 +1,9 @@
 # Ignore environment variables file
 .env
 .env.example
+
+/Users/dev/PycharmProjects/ProtocolFoundry/cbt-frontend/.env
+
 # Ignore Python cache files
 __pycache__/
 *.pyc

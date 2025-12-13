@@ -1,23 +1,21 @@
 from __future__ import annotations
-
-from typing import Any, Dict, List, Optional, TypedDict
-
+from typing import Any, TypedDict
 
 class GraphState(TypedDict, total=False):
-    # Core
     input_text: str
+    require_human_approval: bool
 
-    # Normalized request
-    request: Dict[str, Any]
+    request: dict
+    drafts: list[dict]
+    reviews: dict
+    supervisor: dict
+    final: dict
 
-    # Draft versions (later)
-    drafts: List[Dict[str, Any]]
+    status: str
 
-    # Final result (later)
-    final: Dict[str, Any]
+    # Existing human-gate fields
+    halt_payload: dict
+    human_response: dict
 
-    # Metrics (later)
-    metrics: Dict[str, Any]
-
-    # Status flags
-    status: str  # RUNNING | HALTED | COMPLETED | FAILED
+    # NEW
+    human_feedback: str | None
