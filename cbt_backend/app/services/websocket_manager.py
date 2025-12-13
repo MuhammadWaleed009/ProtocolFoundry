@@ -1,9 +1,6 @@
-from __future__ import annotations
-
 import asyncio
 from typing import Any, Dict, Set
-
-from fastapi import WebSocket
+from fastapi import WebSocket, WebSocketDisconnect
 
 
 class WebSocketManager:
@@ -33,13 +30,14 @@ class WebSocketManager:
             return
 
         async def _send(ws: WebSocket):
-            await ws.send_json(message)
+            # Don't let a slow client block "real-time" updates
+            await asyncio.wait_for(ws.send_json(message), timeout=1.5)
 
-        results = await asyncio.gather(*[_send(ws) for ws in conns], return_exceptions=True)
+        results = await asyncio.gather(*(_send(ws) for ws in conns), return_exceptions=True)
 
         dead: list[WebSocket] = []
         for ws, res in zip(conns, results):
-            if isinstance(res, Exception):
+            if isinstance(res, (WebSocketDisconnect, asyncio.TimeoutError, RuntimeError, Exception)):
                 dead.append(ws)
 
         if dead:

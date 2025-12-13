@@ -177,7 +177,14 @@ def list_run_events(run_id: str, limit: int = 100) -> list[dict]:
     )
 
 
-def set_pending_interrupt(run_id: str, interrupt_payload: dict) -> None:
+def set_pending_interrupt(run_id: str, interrupt_payload: dict | None) -> None:
+    if interrupt_payload is None:
+        exec_sql(
+            "UPDATE runs SET pending_interrupt=NULL, updated_at=now() WHERE run_id=%s",
+            [run_id],
+        )
+        return
+
     exec_sql(
         "UPDATE runs SET pending_interrupt=%s, updated_at=now() WHERE run_id=%s",
         [Jsonb(interrupt_payload), run_id],
