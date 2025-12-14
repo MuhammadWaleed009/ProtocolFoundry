@@ -1,5 +1,5 @@
 # Ignore environment variables file
-.env
+/Users/dev/PycharmProjects/ProtocolFoundry/.env
 .env.example
 
 /Users/dev/PycharmProjects/ProtocolFoundry/cbt-frontend/.env
