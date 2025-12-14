@@ -1,73 +1,28 @@
-# React + TypeScript + Vite
+# Cerina Protocol Foundry — Frontend (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+The dashboard provides a transparent view of the LangGraph pipeline, human-in-the-loop halts, and live blackboard state. It consumes REST + WebSocket streams from the backend and offers a PDF export of completed protocols.
 
-Currently, two official plugins are available:
+## Key features
+- Create/clear sessions and launch runs with optional human approval.
+- Live pipeline view (WS): node progression, halted state, recent actions.
+- Pending approval panel with inline approve/reject + draft preview.
+- Blackboard panels: drafts/final preview, scratchpad notes, WS event log.
+- PDF export of the final protocol (includes user query).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Running locally
+```bash
+cd cbt-frontend
+npm install
+npm run dev
 ```
+Set the backend base URL via `VITE_API_BASE_URL` and WS base via `VITE_WS_BASE_URL` if not using defaults (`http://127.0.0.1:8000`, `ws://127.0.0.1:8000`).
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## UI flow
+- **Create session** → **Launch run** → watch live pipeline updates via WS.
+- If halted, approve/reject in Pending approval. After completion, view/export the final protocol.
+- WS events panel can be expanded/collapsed; REST endpoints serve as fallback.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Notes
+- Intent guard stops out-of-scope prompts; valid CBT prompts run the full pipeline.
+- The dashboard favors live updates; when WS is unavailable, use the Refresh button (REST fallback).

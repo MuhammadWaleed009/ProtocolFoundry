@@ -364,7 +364,10 @@ export function useCbtSession() {
   }, []);
 
   const run = useCallback(async (inputText: string, requireApproval: boolean) => {
-    if (!threadId) return;
+    if (!threadId) {
+      setError("Create a session first.");
+      return;
+    }
     setBusy(true);
     setError(null);
 
