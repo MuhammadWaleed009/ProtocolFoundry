@@ -4,6 +4,7 @@ from langgraph.graph import StateGraph, END
 
 from app.graphs.state import GraphState
 from app.graphs.nodes.intake import intake_node
+from app.graphs.nodes.intent_guard import intent_guard_node
 from app.graphs.nodes.drafter import drafter_node
 from app.graphs.nodes.safety import safety_node
 from app.graphs.nodes.critic import critic_node
@@ -50,6 +51,7 @@ def build_graph():
     g = StateGraph(GraphState)
 
     g.add_node("intake", intake_node)
+    g.add_node("intent_guard", intent_guard_node)
     g.add_node("drafter", drafter_node)
     g.add_node("safety", safety_node)
     g.add_node("critic", critic_node)
@@ -59,8 +61,19 @@ def build_graph():
 
     g.set_entry_point("intake")
 
+    # guard route: only proceed to drafting if request is CBT-relevant
+    g.add_edge("intake", "intent_guard")
+
+    def route_after_guard(state: GraphState) -> str:
+        return "drafter" if bool(state.get("is_cbt_relevant")) else "end"
+
+    g.add_conditional_edges(
+        "intent_guard",
+        route_after_guard,
+        {"drafter": "drafter", "end": END},
+    )
+
     # core pipeline
-    g.add_edge("intake", "drafter")
     g.add_edge("drafter", "safety")
     g.add_edge("safety", "critic")
     g.add_edge("critic", "supervisor")

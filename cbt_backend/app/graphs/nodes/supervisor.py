@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
-from app.core import config as s
+from app.core.config import get_settings
 from app.graphs.prompts import SUPERVISOR_SYSTEM
 from app.graphs.state import GraphState
 from app.services.llm import chat_json
@@ -36,7 +36,9 @@ def supervisor_node(state: GraphState) -> dict:
     critic = reviews.get("critic") or {}
 
     iteration = int(metrics.get("iteration") or 1)
-    max_iters = int(getattr(s, "MAX_ITERATIONS", 3))
+    # allow per-run override via metrics.max_iterations; fall back to settings
+    settings = get_settings()
+    max_iters = int(metrics.get("max_iterations") or settings.MAX_ITERATIONS)
 
     safety_pass = bool(safety.get("safety_pass", True))
     quality_pass = bool(critic.get("quality_pass", True))

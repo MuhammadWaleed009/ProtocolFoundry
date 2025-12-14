@@ -29,9 +29,18 @@ def _merge_scratchpad(a: Any, b: Any) -> dict:
         prev = out.get(k)
         prev_list = prev if isinstance(prev, list) else []
         if isinstance(v, list):
-            out[k] = prev_list + v
+            # avoid duplicate adjacent entries to keep UI tidy
+            merged = list(prev_list)
+            for item in v:
+                if merged and merged[-1] == item:
+                    continue
+                merged.append(item)
+            out[k] = merged
         else:
-            out[k] = prev_list + [str(v)]
+            if not (prev_list and prev_list[-1] == v):
+                out[k] = prev_list + [str(v)]
+            else:
+                out[k] = prev_list
     return out
 
 
@@ -126,6 +135,9 @@ class GraphState(TypedDict, total=False):
 
     current_node: Annotated[str, _replace]
     status: Annotated[str, _replace]
+
+    # intent guard
+    is_cbt_relevant: Annotated[bool, _replace]
 
     # human gate
     halt_payload: Annotated[dict | None, _replace]

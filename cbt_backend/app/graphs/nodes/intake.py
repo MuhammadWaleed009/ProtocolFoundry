@@ -13,5 +13,6 @@ def intake_node(state: GraphState) -> dict:
             "text": text,
         },
         "status": "RUNNING",
-        "metrics": {"iteration": 1},
+        # start at 0 so max_iterations applies to full loop count
+        "metrics": {"iteration": 0},
     }

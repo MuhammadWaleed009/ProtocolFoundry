@@ -9,7 +9,7 @@ from app.api.routes_runs import router as runs_router
 
 from app.persistence.checkpointer import checkpointer_manager
 from app.persistence.db import exec_sql
-from app.persistence.run_tables import RUNS_TABLE_SQL, RUN_EVENTS_TABLE_SQL
+from app.persistence.run_tables import RUNS_TABLE_SQL, RUN_EVENTS_TABLE_SQL, RUNS_ALTER_SQL
 
 
 SESSIONS_TABLE_SQL = """
@@ -27,6 +27,7 @@ async def lifespan(app: FastAPI):
     exec_sql(SESSIONS_TABLE_SQL)
     exec_sql(RUNS_TABLE_SQL)
     exec_sql(RUN_EVENTS_TABLE_SQL)
+    exec_sql(RUNS_ALTER_SQL)
 
     yield
 
