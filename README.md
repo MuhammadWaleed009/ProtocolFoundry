@@ -102,8 +102,3 @@ Set env if needed: `VITE_API_BASE_URL` (default `http://127.0.0.1:8000`), `VITE_
 ## MCP usage
 - From `cbt_backend`: `python3 -m mcp_server.server`
 - Connect via MCP Inspector or Claude Desktop custom MCP server (stdio command above) and call `build_cbt_protocol` with your prompt. `auto_approve_on_halt` can finalize halted runs automatically; set `require_human_approval` to enforce halts.
-
-## Notes / gaps
-- Env loading in `app/core/config.py` still points to a hard path; adjust to a repo-relative `.env` for portability.
-- Loom demo not included; record walkthrough (UI, halt/approve, MCP call) per brief.
-- Optional: add more tests (API/WS/HALT-RESUME) and empathy/tone reviewer agent if desired.
